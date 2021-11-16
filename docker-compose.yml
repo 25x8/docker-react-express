@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  frontend-cli:
+    image: node:16-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+
+  frontend-hot-reload:
+    image: node:16-alpine
+    working_dir: /app
+    ports:
+      - "3030:3000"
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm start"
+
+  create-react-app:
+    build:
+      context: ./docker/development/create-react-app
+    user: 1000:1000
+    volumes:
+      - ./frontend:/app
+
+  api:
+    image: node:16-alpine
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./api:/app
+    command: sh -c "node server.js"
+
+  api-cli:
+    image: node:16-alpine
+    working_dir: /app
+    volumes:
+      - ./api:/app
+
+  create-express-app:
+    build:
+      context: ./docker/development/create-express-app
+    user: 1000:1000
+    volumes:
+      - ./api:/app
